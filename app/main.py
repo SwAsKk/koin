@@ -7,6 +7,8 @@ import uvicorn
 from db.funcs import DataBase as db
 
 from shapes.user import UserRequest
+from routes import trans
+
 
 app = FastAPI()
 
@@ -18,6 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(trans.router, prefix="/api", tags=["transactions"])
 
 if __name__ == "__main__":
     uvicorn.run(
