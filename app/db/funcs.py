@@ -3,12 +3,9 @@ import json
 from functools import wraps
 from config import config
 
-from shapes.deal import DealRequest
-
 from db.fields import (
-    DB_user_query,
-    DB_deal_query
-)
+    DB_user_query
+    )
 
 
 class DataBase:
@@ -59,15 +56,5 @@ class DataBase:
 
         return DataBase.get_one_or_none()
     
-    @db_dec
-    def create_deal(deal: DealRequest):
-        DataBase.cursor.execute(DB_deal_query.NEW_DEAL.value, (deal.name, deal.value, deal.is_equally,))
-        deal_id = DataBase.get_one_or_none()
-
-        for i in deal.participants:
-            DataBase.cursor.execute(DB_deal_query.NEW_PARTICIPANT.value, (i.user_id, deal_id, i.value))
-
-
-
 
 DataBase.connect()
