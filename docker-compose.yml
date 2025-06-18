@@ -1,0 +1,40 @@
+networks:
+    koin-net:
+        external: false
+        driver: bridge
+
+volumes:
+    koin-psql-data:
+    rabbitmq_data:
+
+services:
+    db:
+        image: postgres:16
+        ports:
+        - "5430:5432"
+        environment:
+            POSTGRES_INITDB_ARGS: "--lc-collate=C --lc-ctype=en_US.UTF-8 --lc-messages=en_US.UTF-8 --encoding=UTF-8"
+            POSTGRES_PASSWORD: 123
+        volumes:
+            - ./env/localtime:/etc/localtime:ro
+            - ./env/pgsql/override.conf:/etc/pgsql/conf.d/10-override.conf:ro
+            - ./env/pgsql/initdb.sql:/docker-entrypoint-initdb.d/init.sql:ro
+            - koin-psql-data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+            interval: 10s
+            retries: 5
+            timeout: 5s
+        restart: "unless-stopped"
+        networks:
+            - koin-net
+    
+    cli-flyway:
+        profiles: ["cli-flyway"]
+        image: flyway/flyway:11-alpine
+        volumes:
+            - ./env/pgsql/migrations:/flyway/sql:ro
+        restart: "no"
+        networks:
+            - koin-net
+  

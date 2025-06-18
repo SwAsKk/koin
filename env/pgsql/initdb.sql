@@ -1,0 +1,11 @@
+CREATE USER koin WITH PASSWORD '123';
+
+CREATE DATABASE koin WITH OWNER koin ENCODING 'UTF-8' LC_COLLATE 'C' LC_CTYPE 'en_US.UTF-8';
+
+\c koin
+
+CREATE SCHEMA koin;
+ALTER SCHEMA koin OWNER TO koin;
+COMMENT ON SCHEMA koin IS 'koin schema';
+
+ALTER ROLE koin IN DATABASE koin SET search_path TO koin;
