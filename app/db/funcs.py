@@ -4,7 +4,8 @@ from functools import wraps
 from config import config
 
 from db.fields import (
-    DB_user_query
+    DB_user_query,
+    DB_trans_query
     )
 
 
@@ -55,6 +56,26 @@ class DataBase:
         DataBase.connection.commit()
 
         return DataBase.get_one_or_none()
-    
+
+class DBTransaction:
+
+    @staticmethod
+    @DataBase.db_dec
+    def create_transaction(user_id: int, name: str, type_id: int, value: int, description: str):
+        DataBase.cursor.execute(DB_trans_query.NEW_TRANS.value, (user_id, name, type_id, value, description))
+        return DataBase.get_one()
+
+    @staticmethod
+    @DataBase.db_dec
+    def get_transactions_by_user(user_id: int):
+        DataBase.cursor.execute(DB_trans_query.GET_TRANS_BY_USER.value, (user_id,))
+        return DataBase.get_all()
+
+    @staticmethod
+    @DataBase.db_dec
+    def delete_transaction(trans_id: int):
+        DataBase.cursor.execute(DB_trans_query.DELETE_TRANS.value, (trans_id,))
+        return DataBase.get_one()
+
 
 DataBase.connect()

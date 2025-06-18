@@ -37,4 +37,19 @@ services:
         restart: "no"
         networks:
             - koin-net
+
+    
+    backend:
+        image: koin_backend
+        build:
+            context: ./app
+            dockerfile: ../env/backend/Dockerfile
+        restart: always
+        ports:
+            - "8000:8000"
+        networks:
+            - koin-net
+        depends_on:
+            - db
+
   
