@@ -32,11 +32,24 @@ services:
     cli-flyway:
         profiles: ["cli-flyway"]
         image: flyway/flyway:11-alpine
+        environment:
+            FLYWAY_URL: jdbc:postgresql://db:5432/koin
+            FLYWAY_USER: koin
+            FLYWAY_PASSWORD: 123
+            FLYWAY_SCHEMAS: koin
+            FLYWAY_DEFAULT_SCHEMA: koin
+            FLYWAY_LOCATIONS: filesystem:/flyway/sql
+            FLYWAY_BASELINE_ON_MIGRATE: true
+            FLYWAY_VALIDATE_ON_MIGRATE: true
+            FLYWAY_CLEAN_DISABLED: true
         volumes:
             - ./env/pgsql/migrations:/flyway/sql:ro
+            - ./env/flyway.conf:/flyway/conf/flyway.conf:ro
         restart: "no"
         networks:
             - koin-net
+        depends_on:
+            - db
 
     
     backend:
